@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { CiMicrophoneOn } from "react-icons/ci";
 const themes = {
   dark: {

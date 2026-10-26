@@ -7,20 +7,20 @@ dotenv.config()
 import cors from "cors"
 import userRouter from "./Routes/user.route.js"
 import assistantRouter from "./Routes/assistant.route.js"
+import bookingRouter from "./Routes/booking.route.js"
+import businessRouter from "./Routes/business.route.js"
 // import billingRouter from "./Routes/billing.route.js" // Razorpay — disabled for now
 
 
 const app = express()
-const privateCors =
-  cors({
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(",").map((url) => url.trim())
+  : ["http://localhost:5173"];
 
-    origin: [
-      "http://localhost:5173"
-    ],
-
-    credentials: true
-
-  });
+const privateCors = cors({
+  origin: allowedOrigins,
+  credentials: true,
+});
 
   const publicCors =
   cors({
@@ -38,11 +38,14 @@ app.get("/" , (req,res)=>{
 
 app.use("/api/auth",privateCors , authRouter)
 app.use("/api/user",privateCors , userRouter)
+app.use("/api/business", privateCors, businessRouter)
 // app.use("/api/billing",privateCors , billingRouter) // Razorpay — disabled for now
 
 app.use("/api/assistant",publicCors , assistantRouter)
-const PORT = process.env.PORT
-app.listen(PORT , ()=>{
-    console.log(`Server Started on Port ${PORT}`)
-    connectDB()
-})
+app.use("/api/booking", publicCors, bookingRouter)
+// Express Application Initialization
+const PORT = process.env.PORT || 8000;
+app.listen(PORT, () => {
+    console.log(`Server Started on Port ${PORT}`);
+    connectDB();
+});

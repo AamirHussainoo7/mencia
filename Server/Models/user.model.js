@@ -12,7 +12,99 @@ const pageSchema = new mongoose.Schema(
     },
   },
   { _id: false }
-)
+);
+const timeSlotSchema = new mongoose.Schema(
+  {
+    slotId: {
+      type: String,
+      required: true,
+      default: () => new mongoose.Types.ObjectId().toString(),
+    },
+    name: {
+      type: String,
+      default: "",
+    },
+    startTime: {
+      type: String, // HH:mm format, e.g. "14:00"
+      required: true,
+    },
+    endTime: {
+      type: String, // HH:mm format, e.g. "15:00"
+      required: true,
+    },
+    capacity: {
+      type: Number, // Number of tables
+      required: true,
+      min: 1,
+      default: 5,
+    },
+    seatsPerTable: {
+      type: Number,
+      default: 4,
+      min: 1,
+    },
+  },
+  { _id: false }
+);
+
+const bookingSettingsSchema = new mongoose.Schema(
+  {
+    bookingEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    location: {
+      type: String,
+      default: "",
+    },
+    timezone: {
+      type: String,
+      default: "Asia/Kolkata",
+    },
+    workingDays: {
+      type: [String],
+      default: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+    },
+    openingTime: {
+      type: String,
+      default: "10:00",
+    },
+    closingTime: {
+      type: String,
+      default: "22:00",
+    },
+    slots: {
+      type: [timeSlotSchema],
+      default: [],
+    },
+    seatsPerTable: {
+      type: Number,
+      default: 4,
+      min: 1,
+    },
+    maxPartySize: {
+      type: Number,
+      default: 12,
+      min: 1,
+    },
+    advanceDaysLimit: {
+      type: Number,
+      default: 30,
+      min: 1,
+    },
+    minNoticeMinutes: {
+      type: Number,
+      default: 60,
+      min: 0,
+    },
+    cancellationPolicy: {
+      type: String,
+      default: "Free cancellation up to 1 hour before your reserved time slot.",
+    },
+  },
+  { _id: false }
+);
+
 
 const userSchema = new mongoose.Schema({
     name:{
@@ -84,6 +176,19 @@ const userSchema = new mongoose.Schema({
       ],
       default:"active"
     },
+    groqApiKey:{
+        type:String,
+        default:""
+    },
+    groqStatus:{
+        type:String,
+        enum:[
+        "active",
+        "quota_exceeded",
+        "invalid",
+      ],
+      default:"active"
+    },
     totalMessages:{
         type:Number,
         default:0
@@ -106,6 +211,11 @@ const userSchema = new mongoose.Schema({
     isSetupComplete:{
         type:Boolean,
         default:false
+    },
+
+    bookingSettings: {
+        type: bookingSettingsSchema,
+        default: () => ({}),
     }
 
 },{timestamps:true})

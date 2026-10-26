@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -7,9 +7,9 @@ import ProtectedRoute from './Components/ProtectedRoute'
 import Navbar from './Components/Navbar'
 import Builder from './pages/Builder'
 import Billing from './pages/Billing'
+import Bookings from './pages/Bookings'
 import { Toaster } from "react-hot-toast"
-export const ServerUrl = "http://localhost:8000"
-export const CLIENT_URL = "http://localhost:5173"
+import { ServerUrl } from './utils/constants'
 function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -45,6 +45,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Home user={user}/>} />
             <Route path='/builder' element={<Builder user={user} setUser={setUser}/>}/>
+            <Route path='/bookings' element={<Bookings user={user}/>}/>
             <Route path='/billing' element={<Billing user={user}/>}/>
 
             <Route path='*' element={<Navigate to="/" replace/>}/>

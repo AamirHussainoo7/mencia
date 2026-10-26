@@ -25,6 +25,7 @@ export const saveAssistant = async (req,res) => {
         tone,
         theme,
         geminiApiKey,
+        groqApiKey,
         pages,
         } = req.body
 
@@ -39,10 +40,20 @@ export const saveAssistant = async (req,res) => {
         user.tone = tone;
         user.theme = theme;
 
-        if(geminiApiKey){
-            user.geminiApiKey = geminiApiKey;
+        if (groqApiKey && groqApiKey !== user.groqApiKey) {
+            user.groqApiKey = groqApiKey;
+            user.groqStatus = "active";
         }
-        user.geminiStatus = "active";
+
+        if (geminiApiKey && geminiApiKey !== user.geminiApiKey) {
+            user.geminiApiKey = geminiApiKey;
+            user.geminiStatus = "active";
+            // Migration convenience: If user pasted a Groq key (starts with gsk_) into geminiApiKey
+            if (geminiApiKey.startsWith("gsk_")) {
+                user.groqApiKey = geminiApiKey;
+                user.groqStatus = "active";
+            }
+        }
         user.pages = pages || [];
 
         user.isSetupComplete = true

@@ -1,4 +1,3 @@
-import React from 'react'
 import { HiOutlineSparkles, HiOutlineMicrophone } from "react-icons/hi";
 import { HiOutlineBolt, HiOutlineCodeBracket } from "react-icons/hi2";
 import { FcGoogle } from "react-icons/fc";
@@ -6,7 +5,7 @@ import logo from "../assets/logo.png"
 import { signInWithPopup } from 'firebase/auth';
 import { auth, provider } from '../utils/firebase';
 import axios from "axios"
-import { ServerUrl } from '../App';
+import { ServerUrl } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 function Login({setUser}) {

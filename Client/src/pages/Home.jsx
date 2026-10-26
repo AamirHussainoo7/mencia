@@ -1,4 +1,3 @@
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import AssistantPreview from '../Components/AssistantPreview'
 import logo from "../assets/logo.png"
@@ -28,7 +27,7 @@ const STEPS = [
   },
 ];
 
-function Home({ user }) {
+function Home() {
   const navigate = useNavigate()
   return (
     <div className='min-h-screen bg-[#f8fafc] overflow-hidden'>

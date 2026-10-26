@@ -1,4 +1,4 @@
-import { generateGeminiResponse } from "../Configs/gemini.js"
+import { processAssistantMessage } from "../Services/booking.ai.js"
 import User from "../Models/user.model.js"
 
 
@@ -6,7 +6,7 @@ export const getAssistantConfig = async (req, res) => {
     try {
         const { userId } = req.params
 
-        const user = await User.findById(userId).select("-geminiApiKey")
+        const user = await User.findById(userId).select("-geminiApiKey -groqApiKey")
         if (!user) {
             return res.status(404).json({ message: "failed to get user" })
         }
@@ -32,8 +32,12 @@ export const askAssistant = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "User is not found" })
         }
-        if (!user.geminiApiKey) {
-            return res.status(400).json({ message: "gemini apikey is not added" })
+
+        const apiKey = user.groqApiKey || process.env.GROQ_API_KEY || user.geminiApiKey;
+        if (!apiKey) {
+            return res.status(400).json({
+                message: "AI provider API key is not configured. Please configure GROQ_API_KEY on the server or add an assistant API key."
+            });
         }
 
         if (user.plan === "free"
@@ -42,144 +46,49 @@ export const askAssistant = async (req, res) => {
         }
 
         if (user.plan === "pro" && new Date(user.proExpiresAt) < new Date()) {
-            user.plan === "free"
+            user.plan = "free"; // Fix BUG-001: assignment instead of comparison
 
-            await user.save()
+            await user.save();
 
-            return res.status(400).json({ message: "Pro plan expired" })
+            return res.status(400).json({ message: "Pro plan expired" });
         }
 
-        const cleanMessage = message.toLowerCase()
+        const { currentPath, history } = req.body;
+        const result = await processAssistantMessage({
+            user,
+            message,
+            currentPath,
+            history,
+        });
 
-        if (user.enableNavigation) {
-
-            // Navigation Commands
-            const navigationWords = [
-
-                "open",
-                "go",
-                "start",
-                "show",
-                "navigate",
-                "take me",
-
-            ];
-
-            // Check navigation intent
-            const wantsNavigation =
-                navigationWords.some((word) =>
-
-                    cleanMessage.startsWith(word)
-                );
-
-            // User wants navigation
-            if (wantsNavigation) {
-
-                // Find matching page
-                const matchedPage =
-                    user.pages.find((page) =>
-
-                        page.keywords.some((keyword) =>
-
-                            cleanMessage.includes(
-                                keyword.toLowerCase()
-                            )
-                        )
-                    );
-
-                // Page found
-                if (matchedPage) {
-
-                    // Already open
-                    if (
-                        req.body.currentPath ===
-                        matchedPage.path
-                    ) {
-
-                        return res.json({
-
-                            success: true,
-
-                            response:
-                                `${matchedPage.name} already open`
-
-                        });
-                    }
-
-                    // Navigate
-                    return res.json({
-
-                        success: true,
-
-                        action: "navigate",
-
-                        path: matchedPage.path,
-
-                        response:
-                            `Opening ${matchedPage.name}`,
-
-                    });
-                }
-            }
+        // Do not charge free users if the provider experienced an outage/unavailability
+        if (user.plan === "free" && !result.isUnavailable) {
+            user.totalMessages += 1;
+            await user.save();
         }
 
-
-
-        const prompt = `
-
-You are ${user.assistantName}.
-
-Business Name:
-${user.businessName}
-
-Business Type:
-${user.businessType}
-
-Business Description:
-${user.businessDescription}
-
-Assistant Tone:
-${user.tone}
-
-
-Rules:
-
-- Keep replies under 15 words
-- Give fast direct responses
-- Talk naturally
-- Behave like smart voice assistant
-- Avoid long explanations
-- Keep responses short for quick voice playback
-
-User Question:
-${message}
-
-`;
-
-     const aiResponse = await generateGeminiResponse({prompt ,apikey: user.geminiApiKey , user })
-
-    if(user.plan === "free"){
-        user.totalMessages += 1
-
-     await user.save()
-
-    }
-    return  res.json({
-                success: true,
-                aiResponse
-            });
+        return res.json({
+            success: true,
+            aiResponse: result.aiResponse,
+            action: result.action,
+            path: result.path,
+            toolResult: result.toolResult,
+            isUnavailable: Boolean(result.isUnavailable),
+        });
 
     } catch (error) {
-
-        console.log(error)
-
-        return  res.status(500).json({
-                success: false,
-                message:
-                    "Assistant AI Error",
-            });
-
+        const safeMessage =
+            error.userFriendlyMessage ||
+            "Our assistant is temporarily experiencing high demand. Please try again shortly.";
+        console.error("Assistant Error:", safeMessage);
+        return res.status(error.status && error.status >= 400 && error.status < 500 ? error.status : 503).json({
+            success: false,
+            message: safeMessage,
+            aiResponse: safeMessage,
+            isUnavailable: true,
+        });
     }
 }
+
 
 

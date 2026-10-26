@@ -1,615 +1,750 @@
-/* toggle btn */
+/* ========================================================
+   MENCIA AI ASSISTANT WIDGET (Clean, Optimized, V1-Referenced)
+   ======================================================== */
 
-.mencia-btn{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  width:68px;
-  height:68px;
-  border:none;
-  border-radius:999px;
-  cursor:pointer;
-  z-index:999999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  overflow:hidden;
-  transition:.3s;
-}
-.mencia-btn img{
-  width:34px;
-  height:34px;
-  object-fit:contain;
+/* Floating Launcher Button */
+.mencia-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 64px;
+  height: 64px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
 }
 
-/* popup */
-
-.mencia-popup{
-  position:fixed;
-  right:18px;
-  bottom:98px;
-
-  width:360px;
-  min-width:360px;
-  max-width:360px;
-
-  height:580px;
-  min-height:580px;
-  max-height:580px;
-
-  border-radius:38px;
-  overflow:hidden;
-
-  z-index:999999;
-  display:none;
-
-  box-shadow:
-    0 20px 80px rgba(0,0,0,.32);
+.mencia-btn:hover {
+  transform: scale(1.08);
 }
 
-
-.mencia-overlay{
-  position:absolute;
-  inset:0;
+.mencia-btn img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
 }
 
-.mencia-content{
-  position:relative;
-  z-index:2;
-
-  width:100%;
-  height:100%;
-
-  padding:18px 20px 14px;
-
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  align-items:center;
+/* Assistant Popup Container */
+.mencia-popup {
+  position: fixed;
+  right: 20px;
+  bottom: 94px;
+  width: 375px;
+  max-width: calc(100vw - 28px);
+  height: 590px;
+  max-height: calc(100vh - 110px);
+  border-radius: 32px;
+  overflow: hidden;
+  z-index: 999999;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45), 0 0 1px 1px rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
 }
 
-
-.mencia-top{
-    width:100%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+.mencia-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
-.mencia-orb-wrap{
-  position:relative;
-  margin-top:2px;
-}
-.mencia-orb-glow{
-position:absolute;
-  inset:0;
-  transform:scale(1.8);
-  border-radius:999px;
-  filter:blur(75px);
-  opacity:.6;
-}
-
-.mencia-orb{
-     position:relative;
-  width:118px;
-  height:118px;
-  border-radius:999px;
-  animation:pulse 2s infinite;
+.mencia-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-@keyframes pulse {
-     0%{
-    transform:scale(1);
-  }
-
-  50%{
-    transform:scale(1.04);
-  }
-
-  100%{
-    transform:scale(1);
-  }
+/* Close Button */
+.mencia-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 0.2s ease;
 }
 
-
-.mencia-title{
-  margin-top:14px;
-  font-size:28px;
-  line-height:1.1;
-  font-weight:700;
-  text-align:center;
+.mencia-close-btn:hover {
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  transform: scale(1.08);
 }
 
-.mencia-sub{
-  margin-top:10px;
-  font-size:14px;
-  line-height:1.6;
-  text-align:center;
-}
-.mencia-status{
-margin-top:18px;
-  font-size:16px;
-  font-weight:700;
-}
-
-.mencia-wave{
-  margin-top:8px;
-  display:flex;
-  align-items:flex-end;
-  gap:5px;
-  height:28px;
-  opacity:0;
-  transition:.3s;
+/* Fixed Top Header */
+.mencia-top {
+  position: relative;
+  width: 100%;
+  flex-shrink: 0;
+  padding: 16px 18px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.mencia-wave.active{
-    opacity: 1;
+.mencia-orb-wrap {
+  position: relative;
+  margin-top: 2px;
+}
+
+.mencia-orb-glow {
+  position: absolute;
+  inset: 0;
+  transform: scale(1.6);
+  border-radius: 999px;
+  filter: blur(55px);
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.mencia-orb {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  animation: pulseOrb 2.4s infinite ease-in-out;
+  transition: all 0.3s ease;
+}
+
+@keyframes pulseOrb {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+.mencia-title {
+  margin-top: 10px;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.mencia-sub {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+  opacity: 0.75;
+  transition: all 0.3s ease;
+}
+
+.mencia-status {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.mencia-wave {
+  margin-top: 4px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 20px;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
 
 .mencia-wave span {
-    width:5px;
-  border-radius:999px;
-  animation:wave 1.2s infinite ease-in-out;
-  
+  width: 4px;
+  border-radius: 999px;
+  animation: waveAnim 1.2s infinite ease-in-out;
 }
 
-.mencia-wave span:nth-child(1){
-    height: 14px;
+.mencia-wave span:nth-child(1) { height: 10px; }
+.mencia-wave span:nth-child(2) { height: 20px; }
+.mencia-wave span:nth-child(3) { height: 12px; }
+.mencia-wave span:nth-child(4) { height: 22px; }
+.mencia-wave span:nth-child(5) { height: 14px; }
+.mencia-wave span:nth-child(6) { height: 18px; }
+
+@keyframes waveAnim {
+  0% { opacity: 0.3; transform: scaleY(0.7); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+  100% { opacity: 0.3; transform: scaleY(0.7); }
 }
 
-.mencia-wave span:nth-child(2){
-  height:28px;
+/* Quick Action Chips */
+.mencia-quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin: 8px 0 4px;
+  width: 100%;
 }
 
-.mencia-wave span:nth-child(3){
-  height:16px;
+.mencia-chip {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff !important;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
 }
 
-.mencia-wave span:nth-child(4){
-  height:34px;
+.mencia-chip:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: translateY(-1px);
 }
 
-.mencia-wave span:nth-child(5){
-  height:20px;
+.mencia-chip-cancel {
+  background: rgba(244, 63, 94, 0.18);
+  border-color: rgba(244, 63, 94, 0.4);
+  color: #ffffff !important;
 }
 
-@keyframes wave{
-  0%{
-    opacity:.4;
-    transform:scaleY(.8);
-  }
-
-  50%{
-    opacity:1;
-    transform:scaleY(1.2);
-  }
-
-  100%{
-    opacity:.4;
-    transform:scaleY(.8);
-  }
+.mencia-chip-cancel:hover {
+  background: rgba(244, 63, 94, 0.3);
+  border-color: rgba(244, 63, 94, 0.6);
 }
 
-.mencia-user-text{
-   margin-top:10px;
-  min-height:20px;
-  font-size:14px;
-  line-height:1.4;
-  text-align:center;
-  font-weight:600;
+/* Compact Header Transition when Conversation Starts */
+.mencia-has-chat .mencia-top {
+  padding: 10px 18px 2px;
 }
 
-.mencia-ai-text{
-  margin-top:2px;
-  min-height:18px;
-  font-size:13px;
-  line-height:1.4;
-  text-align:center;
-  opacity:.82;
+.mencia-has-chat .mencia-orb {
+  width: 44px;
+  height: 44px;
 }
 
-.mencia-bottom{
-   position:relative;
-  width:130px;
-  height:130px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.mencia-has-chat .mencia-orb-glow {
+  transform: scale(1.3);
+  filter: blur(35px);
 }
 
-.mencia-mic{
-  position:relative;
-  z-index:2;
-
-  width:74px;
-  height:74px;
-
-  border:none;
-  border-radius:999px;
-  cursor:pointer;
-
-  color:white;
-  font-size:26px;
-
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  transition:.3s;
-
-  
-  animation:micFloat 2.5s infinite ease-in-out;
+.mencia-has-chat .mencia-title {
+  font-size: 17px;
+  margin-top: 4px;
 }
 
-.mencia-mic:hover{
-  
-  transform:scale(1.06);
+.mencia-has-chat .mencia-sub {
+  display: none;
 }
 
-
-@keyframes micFloat{
-   0%{
-    transform:translateY(0px);
-  }
-
-  50%{
-    transform:translateY(-4px);
-  }
-
-  100%{
-    transform:translateY(0px);
-  }
+.mencia-has-chat .mencia-status {
+  margin-top: 2px;
+  font-size: 12px;
 }
 
-.mencia-mic-icon{
-   width:30px;
-  height:30px;
-  object-fit:contain;
+.mencia-has-chat .mencia-quick-actions {
+  margin: 4px 0 2px;
 }
 
-
-/* dark theme */
-.theme-dark{
-  background:#050816;
-  border:1px solid rgba(255,255,255,.08);
+/* Middle Scrollable Message Stream */
+.mencia-chat-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+  width: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
 }
 
-.theme-dark .mencia-overlay{
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(168,85,247,.18),
-      transparent 45%
-    );
+.mencia-chat-scroll > * {
+  flex-shrink: 0;
+}
+
+/* Sleek Custom Scrollbar */
+.mencia-chat-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mencia-chat-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mencia-chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.mencia-chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+/* User Message Bubble */
+.mencia-user-text,
+.mencia-user-bubble {
+  align-self: flex-end;
+  max-width: 86%;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.35), rgba(124, 58, 237, 0.45));
+  border: 1px solid rgba(168, 85, 247, 0.5);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 18px 18px 4px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  word-break: break-word;
+  animation: fadeInBubble 0.22s ease-out;
+}
+
+/* AI Message Bubble */
+.mencia-ai-text,
+.mencia-ai-bubble {
+  align-self: flex-start;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.95);
+  padding: 12px 14px;
+  border-radius: 18px 18px 18px 4px;
+  font-size: 13px;
+  line-height: 1.55;
+  box-sizing: border-box;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  word-break: break-word;
+  animation: fadeInBubble 0.22s ease-out;
+}
+
+.mencia-thinking {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 16px;
+  width: auto !important;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mencia-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a855f7;
+  animation: bounceDot 1.4s infinite ease-in-out both;
+}
+.mencia-dot:nth-child(1) { animation-delay: -0.32s; }
+.mencia-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounceDot {
+  0%, 80%, 100% { transform: scale(0.3); opacity: 0.3; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeInBubble {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.mencia-ai-text strong,
+.mencia-ai-bubble strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.mencia-bullet {
+  margin: 3px 0 3px 6px;
+  line-height: 1.45;
+}
+
+.mencia-spacer {
+  height: 8px;
+}
+
+/* Structured Booking Card */
+.mencia-card-wrap {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mencia-card {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 18px;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.45;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.mencia-card-success {
+  border-color: rgba(16, 185, 129, 0.6);
+  background: rgba(16, 185, 129, 0.16);
+}
+
+.mencia-card-title {
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.mencia-badge {
+  display: inline-block;
+  background: #10b981;
+  color: #ffffff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+}
+
+/* Pinned Bottom Input Dock */
+.mencia-bottom {
+  position: relative;
+  width: 100%;
+  flex-shrink: 0;
+  padding: 8px 14px 12px;
+  box-sizing: border-box;
+  background: rgba(5, 8, 22, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mencia-input-dock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+/* Mic Voice Button (V1-Referenced) */
+.mencia-mic {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 18px rgba(124, 58, 237, 0.35);
+  overflow: hidden;
+}
+
+.mencia-mic:hover {
+  transform: scale(1.06);
+}
+
+.mencia-mic-listening {
+  animation: micPulse 1s infinite alternate ease-in-out;
+}
+
+@keyframes micPulse {
+  0% { transform: scale(1); box-shadow: 0 0 15px rgba(34, 227, 166, 0.6); }
+  100% { transform: scale(1.1); box-shadow: 0 0 35px rgba(34, 227, 166, 0.9); }
+}
+
+.mencia-mic-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+/* Pill Input Bar */
+.mencia-input-bar {
+  flex: 1;
+  height: 44px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 14px;
+  transition: border-color 0.2s, background 0.2s;
+  box-sizing: border-box;
+}
+
+.mencia-input-bar:focus-within {
+  border-color: rgba(168, 85, 247, 0.6);
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.mencia-text-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  padding-right: 6px;
+}
+
+.mencia-text-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.mencia-send-btn {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border: none;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a855f7, #10b981);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mencia-send-btn:hover {
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #9333ea, #059669);
+}
+
+/* ========================================================
+   THEMES (Dark, Light, Glass, Neon)
+   ======================================================== */
+
+/* --- DARK THEME --- */
+.theme-dark {
+  background: #050816;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.theme-dark .mencia-overlay {
+  background: radial-gradient(circle at top, rgba(168, 85, 247, 0.22), transparent 50%);
 }
 
 .theme-dark .mencia-orb,
-.theme-dark .mencia-orb-glow{
-  background:
-    linear-gradient(
-      135deg,
-      #4cc9ff,
-      #7c3aed,
-      #ec4899
-    );
+.theme-dark .mencia-orb-glow {
+  background: linear-gradient(135deg, #4cc9ff, #7c3aed, #ec4899);
 }
 
-.theme-dark .mencia-title{
-  color:white;
-}
-
-.theme-dark .mencia-sub{
-  color:rgba(255,255,255,.68);
-}
-
-.theme-dark .mencia-status{
-  color:#22e3a6;
-}
-
-.theme-dark .mencia-wave span{
-  background:#22e3a6;
-}
-
-.theme-dark .mencia-user-text{
-  color:white;
-}
-
-.theme-dark .mencia-ai-text{
-  color:rgba(255,255,255,.72);
-}
-
-/* =========================
-   DARK THEME BUTTONS
-========================= */
+.theme-dark .mencia-title { color: #ffffff; }
+.theme-dark .mencia-sub { color: rgba(255, 255, 255, 0.68); }
+.theme-dark .mencia-status { color: #22e3a6; }
+.theme-dark .mencia-wave span { background: #22e3a6; }
 
 .theme-dark .mencia-mic,
-.theme-dark.mencia-btn
-{
-  background:
-    linear-gradient(
-      135deg,
-      #7c3aed,
-      #4f8cff
-    );
-
-  /* Large premium glow */
-  box-shadow:
-    0 0 35px rgba(124,58,237,.55),
-    0 0 90px rgba(79,140,255,.38),
-    0 0 140px rgba(124,58,237,.22);
-
+.theme-dark.mencia-btn {
+  background: linear-gradient(135deg, #7c3aed, #4f8cff);
+  box-shadow: 0 0 30px rgba(124, 58, 237, 0.5), 0 0 60px rgba(79, 140, 255, 0.3);
 }
 
-
-/* light theme */
-
-.theme-light{
-  background:
-    linear-gradient(
-      135deg,
-      #ffffff,
-      #eef6ff
-    );
-
-  border:1px solid #dbeafe;
+/* --- LIGHT THEME --- */
+.theme-light {
+  background: linear-gradient(135deg, #ffffff, #f1f7ff);
+  border: 1px solid #dbeafe;
 }
 
-.theme-light .mencia-overlay{
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(59,130,246,.12),
-      transparent 45%
-    );
+.theme-light .mencia-overlay {
+  background: radial-gradient(circle at top, rgba(59, 130, 246, 0.14), transparent 50%);
 }
 
 .theme-light .mencia-orb,
-.theme-light .mencia-orb-glow{
-  background:
-    linear-gradient(
-      135deg,
-      #7dd3fc,
-      #67e8f9,
-      #f5d0fe
-    );
+.theme-light .mencia-orb-glow {
+  background: linear-gradient(135deg, #7dd3fc, #67e8f9, #f5d0fe);
 }
 
-.theme-light .mencia-title{
-  color:#081028;
+.theme-light .mencia-title { color: #081028; }
+.theme-light .mencia-sub { color: #475569; }
+.theme-light .mencia-status { color: #2563eb; }
+.theme-light .mencia-wave span { background: #3b82f6; }
+
+.theme-light .mencia-bottom {
+  background: rgba(255, 255, 255, 0.92);
+  border-top-color: #e2e8f0;
 }
 
-.theme-light .mencia-sub{
-  color:#475569;
+.theme-light .mencia-input-bar {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e1;
 }
 
-.theme-light .mencia-status{
-  color:#3b82f6;
+.theme-light .mencia-text-input { color: #081028; }
+.theme-light .mencia-text-input::placeholder { color: #94a3b8; }
+
+.theme-light .mencia-chip {
+  background: rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.14);
+  color: #081028 !important;
 }
 
-.theme-light .mencia-wave span{
-  background:#60a5fa;
+.theme-light .mencia-chip:hover {
+  background: rgba(0, 0, 0, 0.12);
 }
 
-.theme-light .mencia-user-text{
-  color:#081028;
+.theme-light .mencia-chip-cancel {
+  background: rgba(244, 63, 94, 0.12);
+  border-color: rgba(244, 63, 94, 0.35);
+  color: #e11d48 !important;
 }
 
-.theme-light .mencia-ai-text{
-  color:#475569;
+.theme-light .mencia-user-text,
+.theme-light .mencia-user-bubble {
+  background: linear-gradient(135deg, #dbeafe, #eff6ff);
+  border-color: #bfdbfe;
+  color: #1e3a8a;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.1);
 }
-/* =========================
-   LIGHT THEME BUTTONS
-========================= */
+
+.theme-light .mencia-ai-text,
+.theme-light .mencia-ai-bubble {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #1e293b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.theme-light .mencia-ai-text strong,
+.theme-light .mencia-ai-bubble strong {
+  color: #0f172a;
+}
+
+.theme-light .mencia-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  color: #1e293b;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.theme-light .mencia-close-btn {
+  border-color: #cbd5e1;
+  background: rgba(0, 0, 0, 0.05);
+  color: #475569;
+}
+
+.theme-light .mencia-chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+}
 
 .theme-light .mencia-mic,
-.theme-light.mencia-btn{
-
-  background:
-    linear-gradient(
-      135deg,
-      #60a5fa,
-      #06b6d4
-    );
-
-  /* Large soft glow */
-  box-shadow:
-    0 0 30px rgba(59,130,246,.38),
-    0 0 85px rgba(6,182,212,.28),
-    0 0 130px rgba(59,130,246,.16);
-
+.theme-light.mencia-btn {
+  background: linear-gradient(135deg, #60a5fa, #06b6d4);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.4), 0 0 60px rgba(6, 182, 212, 0.25);
 }
 
-
-/* glass theme */
-
-.theme-glass{
-  background:
-    rgba(0,0,0,.28);
-
-  backdrop-filter:blur(45px);
-
-  -webkit-backdrop-filter:blur(45px);
-
-  border:1px solid rgba(255,255,255,.08);
+/* --- GLASS THEME --- */
+.theme-glass {
+  background: rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(45px);
+  -webkit-backdrop-filter: blur(45px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
-.theme-glass .mencia-overlay{
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(255,255,255,.05),
-      
-    );
+.theme-glass .mencia-overlay {
+  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.08), transparent 50%);
 }
 
 .theme-glass .mencia-orb,
-.theme-glass .mencia-orb-glow{
-  background:
-    linear-gradient(
-      135deg,
-      #bae6fd,
-      #c4b5fd,
-      #f5d0fe
-    );
+.theme-glass .mencia-orb-glow {
+  background: linear-gradient(135deg, #bae6fd, #c4b5fd, #f0abfc);
 }
 
-.theme-glass .mencia-title{
-  color:white;
-}
-
-.theme-glass .mencia-sub{
-  color:rgba(255,255,255,.75);
-}
-
-.theme-glass .mencia-status{
-  color:#a5f3fc;
-}
-
-.theme-glass .mencia-wave span{
-  background:#a5f3fc;
-}
-
-.theme-glass .mencia-user-text{
-  color:white;
-}
-
-.theme-glass .mencia-ai-text{
-  color:rgba(255,255,255,.72);
-}
-/* =========================
-   GLASS THEME BUTTONS
-========================= */
+.theme-glass .mencia-title { color: #ffffff; }
+.theme-glass .mencia-sub { color: rgba(255, 255, 255, 0.72); }
+.theme-glass .mencia-status { color: #a5f3fc; }
+.theme-glass .mencia-wave span { background: #a5f3fc; }
 
 .theme-glass .mencia-mic,
-.theme-glass.mencia-btn{
-
-  background:
-    linear-gradient(
-      135deg,
-      #38bff8a3,
-      #8a5cf6a8
-    );
-
-  /* Frosted neon glow */
-  box-shadow:
-    0 0 35px rgba(34,211,238,.34),
-    0 0 95px rgba(139,92,246,.28),
-    0 0 150px rgba(56,189,248,.18);
-
+.theme-glass.mencia-btn {
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  box-shadow: 0 0 30px rgba(56, 189, 248, 0.4), 0 0 70px rgba(129, 140, 248, 0.25);
 }
 
-/* neon theme */
-
-
-.theme-neon{
-  background:#03120d;
-  border:1px solid rgba(16,185,129,.18);
+/* --- NEON THEME --- */
+.theme-neon {
+  background: #03120d;
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
-.theme-neon .mencia-overlay{
-  background:
-    radial-gradient(
-      circle at top,
-      rgba(16,185,129,.18),
-      transparent 45%
-    );
+.theme-neon .mencia-overlay {
+  background: radial-gradient(circle at top, rgba(16, 185, 129, 0.22), transparent 50%);
 }
 
 .theme-neon .mencia-orb,
-.theme-neon .mencia-orb-glow{
-  background:
-    linear-gradient(
-      135deg,
-      #34d399,
-      #10b981,
-      #14b8a6
-    );
+.theme-neon .mencia-orb-glow {
+  background: linear-gradient(135deg, #6ee7b7, #10b981, #06b6d4);
 }
 
-.theme-neon .mencia-title{
-  color:#ecfdf5;
-}
-
-.theme-neon .mencia-sub{
-  color:rgba(209,250,229,.72);
-}
-
-.theme-neon .mencia-status{
-  color:#6ee7b7;
-}
-
-.theme-neon .mencia-wave span{
-  background:#6ee7b7;
-}
-
-.theme-neon .mencia-user-text{
-  color:#ecfdf5;
-}
-
-.theme-neon .mencia-ai-text{
-  color:rgba(209,250,229,.75);
-}
-
-/* =========================
-   NEON THEME BUTTONS
-========================= */
+.theme-neon .mencia-title { color: #ecfdf5; }
+.theme-neon .mencia-sub { color: rgba(209, 250, 229, 0.72); }
+.theme-neon .mencia-status { color: #34d399; }
+.theme-neon .mencia-wave span { background: #34d399; }
 
 .theme-neon .mencia-mic,
-.theme-neon.mencia-btn{
-
-  background:
-    linear-gradient(
-      135deg,
-      #10b981,
-      #22c55e
-    );
-
-  /* Strong neon glow */
-  box-shadow:
-    0 0 38px rgba(16,185,129,.45),
-    0 0 100px rgba(34,197,94,.32),
-    0 0 160px rgba(16,185,129,.20);
-
+.theme-neon.mencia-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.5), 0 0 70px rgba(5, 150, 105, 0.35);
 }
 
-
-
-@media(max-width:640px){
-  .mencia-popup{
-    width:340px;
-    min-width:340px;
-    max-width:340px;
-
-    height:560px;
-    min-height:560px;
-    max-height:560px;
-
-    right:50%;
-    transform:translateX(50%);
-    bottom:82px;
-
-    border-radius:30px;
+/* ========================================================
+   RESPONSIVE DESIGN (Mobile & Tablets)
+   ======================================================== */
+@media (max-width: 480px) {
+  .mencia-popup {
+    right: 12px;
+    bottom: 84px;
+    width: calc(100vw - 24px);
+    height: calc(100vh - 100px);
+    border-radius: 26px;
   }
 
-  .mencia-btn{
-    width:64px;
-    height:64px;
-    right:14px;
-    bottom:14px;
-  }
-  .mencia-btn img{
-    width: 30px;
-    height: 30px;
+  .mencia-btn {
+    right: 14px;
+    bottom: 14px;
+    width: 58px;
+    height: 58px;
   }
 
-   .mencia-title{
-    font-size:26px;
+  .mencia-btn img {
+    width: 28px;
+    height: 28px;
   }
 
-  .mencia-sub{
-    font-size:13px;
+  .mencia-title {
+    font-size: 20px;
+  }
+
+  .mencia-sub {
+    font-size: 12px;
   }
 }
-
-
-

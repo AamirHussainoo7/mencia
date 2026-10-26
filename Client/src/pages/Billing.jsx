@@ -1,4 +1,3 @@
-import React from 'react'
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +10,7 @@ function Billing({ user }) {
       toast.error("Setup your assistant first");
       navigate("/builder");
     }
-  }, [])
+  }, [user, navigate])
 
   const remainingMessages =
     Math.max(

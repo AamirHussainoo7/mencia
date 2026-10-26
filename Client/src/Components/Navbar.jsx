@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import logo from "../assets/logo.png"
 import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
 import axios from 'axios';
-import { ServerUrl } from '../App';
+import { ServerUrl } from '../utils/constants';
 import toast from 'react-hot-toast';
 function Navbar({user , setUser}) {
   const navigate = useNavigate()
@@ -35,6 +35,8 @@ function Navbar({user , setUser}) {
         {user && (<div className='hidden md:flex items-center gap-3'>
 
           <button onClick={()=>navigate("/builder")} className='px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-emerald-500 text-white text-sm font-medium shadow-md hover:scale-[1.02] transition-all cursor-pointer'>Builder</button>
+
+          <button onClick={()=>navigate("/bookings")} className='px-4 py-2 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium hover:border-purple-300 transition-all cursor-pointer'>Bookings</button>
 
           <button onClick={()=>navigate("/billing")} className='px-4 py-2 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium hover:border-purple-300 transition-all cursor-pointer'>Billing</button>
 
@@ -94,6 +96,7 @@ function Navbar({user , setUser}) {
 
             <div className='flex flex-col gap-3 mt-4'>
               <button className='w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-emerald-500 text-white text-sm font-medium' onClick={()=>{navigate("/builder");setMenuOpen(false)}}>Bulider</button>
+              <button className='w-full py-2.5 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium' onClick={()=>{navigate("/bookings");setMenuOpen(false)}}>Bookings</button>
               <button className='w-full py-2.5 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium' onClick={()=>{navigate("/billing");setMenuOpen(false)}}>Billing</button>
             </div>
 
