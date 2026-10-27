@@ -1,1 +1,81 @@
 @import "tailwindcss";
+
+@theme {
+  --font-serif: 'Playfair Display', Georgia, Cambria, 'Times New Roman', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --color-warm-bg: #F8F3EB;
+  --color-card-bg: #FFFCF7;
+  --color-card-subtle: #F2EDE4;
+
+  --color-espresso: #382017;
+  --color-espresso-dark: #24140D;
+  --color-espresso-subtle: #4D3025;
+
+  --color-terracotta: #A34720;
+  --color-terracotta-hover: #853717;
+  --color-terracotta-dark: #6D2B10;
+  --color-terracotta-light: #FBEBE4;
+
+  --color-peach: #F5E2D1;
+  --color-peach-hover: #EBD2BD;
+  --color-peach-light: #FBF4EC;
+
+  --color-text-main: #201A17;
+  --color-text-muted: #6B5E57;
+  --color-text-subtle: #968880;
+
+  --color-warm-border: #E6DDD1;
+  --color-warm-border-subtle: #F0EAE1;
+
+  --color-status-confirmed: #2E7D32;
+  --color-status-confirmed-bg: #E8F5E9;
+  --color-status-pending: #C77700;
+  --color-status-pending-bg: #FFF8E1;
+  --color-status-cancelled: #C62828;
+  --color-status-cancelled-bg: #FFEBEE;
+  --color-status-completed: #1565C0;
+  --color-status-completed-bg: #E3F2FD;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: #F8F3EB;
+  color: #201A17;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Warm Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F2EDE4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D9CFC2;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B8A997;
+}
+
+/* Clean input focus (clean borders without brown rectangular outlines) */
+input:focus,
+input:focus-visible,
+textarea:focus,
+textarea:focus-visible {
+  outline: none;
+}

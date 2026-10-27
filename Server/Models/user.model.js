@@ -118,7 +118,7 @@ const userSchema = new mongoose.Schema({
     },
     assistantName:{
         type:String,
-        default:"Mencia"
+        default:"Arin AI"
     },
     businessName:{
         type:String,
@@ -129,6 +129,10 @@ const userSchema = new mongoose.Schema({
         default:""
     },
     businessDescription:{
+        type:String,
+        default:""
+    },
+    businessLogo:{
         type:String,
         default:""
     },
@@ -144,12 +148,13 @@ const userSchema = new mongoose.Schema({
     theme:{
         type:String,
         enum:[
+        "warm",
         "light",
         "dark",
         "glass",
         "neon",
       ],
-      default:"dark"
+      default:"warm"
     },
     enableVoice:{
         type:Boolean,
@@ -200,7 +205,7 @@ const userSchema = new mongoose.Schema({
     },
     requestLimit: {
       type: Number,
-      default: 200,
+      default: 100,
     },
 
     proExpiresAt: {

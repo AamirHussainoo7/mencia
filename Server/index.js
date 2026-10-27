@@ -12,13 +12,28 @@ import businessRouter from "./Routes/business.route.js"
 // import billingRouter from "./Routes/billing.route.js" // Razorpay — disabled for now
 
 
+import path from "path"
+import { fileURLToPath } from "url"
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 const app = express()
-const allowedOrigins = process.env.CLIENT_URL
+const configuredOrigins = process.env.CLIENT_URL
   ? process.env.CLIENT_URL.split(",").map((url) => url.trim())
-  : ["http://localhost:5173"];
+  : [];
 
 const privateCors = cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (
+      configuredOrigins.includes(origin) ||
+      /^http:\/\/localhost(:\d+)?$/.test(origin) ||
+      /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)
+    ) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS policy blocked access from origin ${origin}`));
+  },
   credentials: true,
 });
 
@@ -30,7 +45,8 @@ const privateCors = cors({
 app.use(express.json())
 app.use(cookieParser())
 
-
+// Serve assistant widget script and styles statically so embedding from server also works
+app.use(express.static(path.join(__dirname, "../Client/public")))
 
 app.get("/" , (req,res)=>{
     res.json("Hello from Server")

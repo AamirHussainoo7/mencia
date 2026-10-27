@@ -1,112 +1,93 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import logo from "../assets/logo.png"
-import { FiLogOut, FiMenu, FiX } from "react-icons/fi";
-import axios from 'axios';
-import { ServerUrl } from '../utils/constants';
-import toast from 'react-hot-toast';
-function Navbar({user , setUser}) {
-  const navigate = useNavigate()
-  const [menuOpen,setMenuOpen] = useState(false)
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { FiMenu, FiX, FiCheckCircle } from 'react-icons/fi';
 
-  const handleLogout = async () => {
-    try {
-      await axios.get(ServerUrl + "/api/auth/logout" , {withCredentials:true})
-      setUser(null)
-      toast.success("Logout Successfully")
-      navigate("/login")
-    } catch (error) {
-      toast.error("logout failed")
-      console.log(error)
-    }
-  }
+function Navbar({ user }) {
+  const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <div className='sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-orange-100'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between'>
-
-        <div onClick={()=>navigate("/")} className='flex items-center gap-2.5'>
-          <img src={logo} alt="logo" className='h-9 w-auto object-contain' />
-
-          <h1 className='font-bold text-xl text-gray-700 leading-none'>Mencia</h1>
-
-        </div>
-
-
-        {user && (<div className='hidden md:flex items-center gap-3'>
-
-          <button onClick={()=>navigate("/builder")} className='px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-emerald-500 text-white text-sm font-medium shadow-md hover:scale-[1.02] transition-all cursor-pointer'>Builder</button>
-
-          <button onClick={()=>navigate("/bookings")} className='px-4 py-2 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium hover:border-purple-300 transition-all cursor-pointer'>Bookings</button>
-
-          <button onClick={()=>navigate("/billing")} className='px-4 py-2 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium hover:border-purple-300 transition-all cursor-pointer'>Billing</button>
-
-          <div className='flex items-center gap-3 px-4 py-2 rounded-2xl bg-white border border-orange-100 shadow-sm'>
-
-            <div className='w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-emerald-500 flex items-center justify-center flex-shrink-0'>
-              <span className='text-white text-sm font-bold'>
-                {user?.name.charAt(0).toUpperCase()}
-              </span>
-            </div>
-
-            <div className='max-w-[140px]'>
-              <p className='text-sm font-semibold text-gray-800 truncate'>{user.name}</p>
-
-              <p className='text-xs text-gray-400 truncate'>{user.email}</p>
-
-             
-            </div>
-             <button onClick={handleLogout} className='ml-1 text-gray-400 hover:text-red-500 transition-colors cursor-pointer'><FiLogOut size={18}/></button>
-
-
+    <header className='sticky top-0 z-40 bg-[#F8F3EB]/90 backdrop-blur-md border-b border-[#E6DDD1]'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between'>
+        {/* Brand Logo */}
+        <Link to='/' className='flex items-center gap-3 group'>
+          <div className='w-9 h-9 rounded-xl bg-[#382017] flex items-center justify-center text-white shadow-2xs group-hover:bg-[#A34720] transition-colors'>
+            <FiCheckCircle className='text-xl text-[#F5E2D1]' />
           </div>
-          
-          </div>)}
+          <div>
+            <span className='font-serif text-2xl font-bold tracking-tight text-[#201A17]'>Arin AI</span>
+          </div>
+        </Link>
 
+        {/* Center Navigation Links (Public Marketing) */}
+        <nav className='hidden md:flex items-center gap-8 text-sm font-semibold text-[#6B5E57]'>
+          <a href='#features' className='hover:text-[#A34720] transition-colors'>Features</a>
+          <a href='#how-it-works' className='hover:text-[#A34720] transition-colors'>How it Works</a>
+        </nav>
 
-          {user && (
-            <button onClick={()=>setMenuOpen(!menuOpen)} className='md:hidden text-gray-600 hover:text-purple-500 transition-colors'>
-
-              {menuOpen ? <FiX size={22}/> : <FiMenu size={22}/>}
-
-
+        {/* Right CTA Actions */}
+        <div className='hidden sm:flex items-center gap-3'>
+          {user ? (
+            <button
+              onClick={() => navigate('/')}
+              className='px-5 py-2.5 rounded-2xl bg-[#A34720] text-white text-sm font-semibold hover:bg-[#853717] transition-all cursor-pointer shadow-xs shadow-[#A34720]/25'
+            >
+              Go to Dashboard →
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/login')}
+              className='px-6 py-2.5 rounded-2xl bg-[#382017] text-white text-sm font-semibold hover:bg-[#A34720] transition-all cursor-pointer shadow-xs'
+            >
+              Get Started
             </button>
           )}
+        </div>
 
-
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className='md:hidden p-2 text-[#382017] hover:bg-[#F2EDE4] rounded-xl'
+          aria-label='Toggle mobile navigation'
+        >
+          {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
       </div>
 
-
-      {menuOpen && (
-        <div className='md:hidden px-4 pb-4'>
-
-          <div className='bg-white rounded-2xl border border-orange-100 shadow-lg p-4'>
-            <div className='flex items-center gap-3 pb-4 border-b border-orange-100'>
-              <div className='w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-emerald-500 flex items-center justify-center flex-shrink-0'>
-              <span className='text-white text-sm font-bold'>
-                {user?.name.charAt(0).toUpperCase()}
-              </span>
-            </div>
-
-            <div className='flex-1 overflow-hidden'>
-              <p className='text-sm font-semibold text-gray-800 truncate'>{user.name}</p>
-
-              <p className='text-xs text-gray-400 truncate'>{user.email}</p>  
-            </div>
-            </div>
-
-            <div className='flex flex-col gap-3 mt-4'>
-              <button className='w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-emerald-500 text-white text-sm font-medium' onClick={()=>{navigate("/builder");setMenuOpen(false)}}>Bulider</button>
-              <button className='w-full py-2.5 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium' onClick={()=>{navigate("/bookings");setMenuOpen(false)}}>Bookings</button>
-              <button className='w-full py-2.5 rounded-xl border border-orange-100 bg-white text-gray-700 text-sm font-medium' onClick={()=>{navigate("/billing");setMenuOpen(false)}}>Billing</button>
-            </div>
-
-            <button onClick={()=>{setMenuOpen(false);handleLogout()}} className='mt-4 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-colors text-sm font-medium'><FiLogOut size={16}/> LogOut</button>
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div className='md:hidden border-b border-[#E6DDD1] bg-[#FFFCF7] px-6 py-6 space-y-4 animate-fadeIn'>
+          <nav className='flex flex-col space-y-3 text-sm font-semibold text-[#6B5E57]'>
+            <a href='#features' onClick={() => setMobileMenuOpen(false)} className='py-2 hover:text-[#A34720]'>Features</a>
+            <a href='#how-it-works' onClick={() => setMobileMenuOpen(false)} className='py-2 hover:text-[#A34720]'>How it Works</a>
+          </nav>
+          <div className='pt-4 border-t border-[#EFE9DF] flex flex-col gap-2.5'>
+            {user ? (
+              <button
+                onClick={() => {
+                  navigate('/');
+                  setMobileMenuOpen(false);
+                }}
+                className='w-full py-3 rounded-2xl bg-[#A34720] text-white text-sm font-semibold text-center'
+              >
+                Go to Dashboard →
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  navigate('/login');
+                  setMobileMenuOpen(false);
+                }}
+                className='w-full py-3 rounded-2xl bg-[#382017] text-white text-sm font-semibold text-center hover:bg-[#A34720]'
+              >
+                Get Started
+              </button>
+            )}
           </div>
-          </div>
+        </div>
       )}
-      
-    </div>
-  )
+    </header>
+  );
 }
 
-export default Navbar
+export default Navbar;

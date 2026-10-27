@@ -37,7 +37,7 @@ test("executeBookingTool enforces customer confirmation before booking", async (
 
 test("processAssistantMessage intercepts navigation intent without calling AI", async () => {
   const mockUser = {
-    assistantName: "Mencia",
+    assistantName: "Arin AI",
     businessName: "Test Cafe",
     enableNavigation: true,
     pages: [

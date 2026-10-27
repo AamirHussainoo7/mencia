@@ -5,6 +5,7 @@ import {
   createBooking,
   cancelBookingByCustomer,
   getNowInTimezone,
+  format12Hour,
 } from "./booking.service.js";
 
 /**
@@ -121,7 +122,7 @@ export const executeBookingTool = async ({ toolName, args, businessId }) => {
         .filter((s) => s.isAvailable)
         .map((s) => ({
           slotId: s.slotId,
-          time: `${s.startTime} - ${s.endTime}`,
+          time: `${format12Hour(s.startTime)} - ${format12Hour(s.endTime)}`,
           tablesAvailable: s.availableTables,
         }));
 
@@ -232,17 +233,63 @@ export const processAssistantMessage = async ({ user, message, currentPath, hist
   const bookingEnabled = Boolean(user.bookingSettings?.bookingEnabled);
   const nowInfo = getNowInTimezone(user.bookingSettings?.timezone || "Asia/Kolkata");
 
-  let systemInstruction = `
-You are ${user.assistantName}, the AI assistant for "${user.businessName}".
-Business Type: ${user.businessType || "Restaurant / Cafe"}
-Description: ${user.businessDescription || "A welcoming establishment."}
-Assistant Tone: ${user.tone || "friendly"}
-Current Date & Time at Restaurant: ${nowInfo.dateStr} (${nowInfo.dayOfWeek}), ${nowInfo.timeStr} (Timezone: ${user.bookingSettings?.timezone || "Asia/Kolkata"}).
+  const bs = user.bookingSettings || {};
+  const businessAddress = bs.location || user.location || user.address || "";
+  const workingDaysList = (bs.workingDays || []).join(", ");
+  const openingHours = bs.openingTime && bs.closingTime
+    ? `${format12Hour(bs.openingTime)} to ${format12Hour(bs.closingTime)}`
+    : "";
+  const slotsList = Array.isArray(bs.slots) && bs.slots.length > 0
+    ? bs.slots.map((s) => `${format12Hour(s.startTime)} - ${format12Hour(s.endTime)}`).join(", ")
+    : "";
+  const pagesList = Array.isArray(user.pages) && user.pages.length > 0
+    ? user.pages.map((p) => `${p.name} (Path: ${p.path}${p.keywords?.length ? `, Keywords: ${p.keywords.join(", ")}` : ""})`).join("; ")
+    : "";
 
-General Rules:
-- Talk naturally, concisely, and stay in character.
-- Keep standard FAQ and conversational answers brief and informative.
-- Never make up facts about the business.
+  let systemInstruction = `
+You are ${user.assistantName || "Arin AI"}, the official AI assistant for "${user.businessName || "our business"}".
+
+Business Information:
+- Business Name: ${user.businessName || "Our Business"}
+- Business Type: ${user.businessType || "General Business"}
+- About / Description: ${user.businessDescription || "A modern business dedicated to providing excellent service and support."}
+${businessAddress ? `- Physical Address / Location: ${businessAddress}` : "- Physical Address / Location: Available upon request or via our contact page."}
+${openingHours ? `- Operating Hours: ${openingHours}` : ""}
+${workingDaysList ? `- Operating Days: ${workingDaysList}` : ""}
+- Timezone: ${bs.timezone || "Asia/Kolkata"}
+- Current Date & Time at Business: ${nowInfo.dateStr} (${nowInfo.dayOfWeek}), ${nowInfo.timeStr}
+- Tone of Voice: ${user.tone || "friendly"}
+
+Available Website Pages:
+${pagesList || "Main home page"}
+
+Booking & Reservation Information:
+- Online Bookings / Appointments Active: ${bookingEnabled ? "YES" : "NO"}
+${bookingEnabled ? `
+- Available Time Slots: ${slotsList || "Custom appointment times"}
+- Maximum Party Size per Booking: ${bs.maxPartySize || 12} guests
+- Seats per Table / Unit: ${bs.seatsPerTable || 4}
+- Minimum Notice Required: ${bs.minNoticeMinutes || 60} minutes in advance
+- Advance Booking Window: up to ${bs.advanceDaysLimit || 30} days in advance
+- Cancellation Policy: ${bs.cancellationPolicy || "Free cancellation up to 1 hour before scheduled time."}
+` : `
+- Online reservations/bookings are currently disabled for this business.
+`}
+
+Knowledge & Core Rules:
+1. Address & Location:
+   - When asked "what is your address", "where are you located", "location", "directions", or "how to find you":
+     ${businessAddress ? `You MUST state clearly that ${user.businessName || "we are"} located at: "${businessAddress}".` : `Provide our contact guidance.`}
+   - NEVER say you don't know the address or don't have location details.
+
+2. Business Hours & Days:
+   - When asked about opening hours, closing time, or days open, answer with the operating schedule (${workingDaysList || "all week"}, ${openingHours || "standard hours"}).
+   - Always state times in 12-hour format with AM or PM (e.g. 12:00 PM, 8:00 PM). Never use 24-hour military times.
+
+3. Conversation Style:
+   - Talk naturally, concisely (1-3 sentences), warmly, and stay in character.
+   - Always use 12-hour AM/PM format for any time or schedule mentioned (e.g., 08:00 PM – 09:00 PM instead of 20:00 – 21:00).
+   - Never make up fake services or menu items not in the business profile.
 `;
 
   let tools = null;
@@ -251,11 +298,12 @@ General Rules:
     systemInstruction += `
 RESERVATION & BOOKING RULES:
 1. Online table reservations are ACTIVE.
-2. Checking Availability:
+2. 12-Hour Time Format: ALWAYS communicate all times in 12-hour format with AM/PM (e.g. 08:00 PM – 09:00 PM).
+3. Checking Availability:
    - When a guest asks generally about tables, available times, or open slots without specifying their booking details, call 'checkAvailability' for their requested date (format YYYY-MM-DD, default today: ${nowInfo.dateStr}).
-   - When presenting open slots, list the times and ask:
+   - When presenting open slots, list the times in 12-hour AM/PM format and ask:
      "Which time works best for you? To complete your reservation, please also provide your Name, Phone Number, and Party Size."
-3. Collecting Booking Details (CRITICAL):
+4. Collecting Booking Details (CRITICAL):
    - If the guest says "Yes book it", "Confirm", "Book a table", selects a slot, or expresses intent to book, but you DO NOT yet have their Customer Name or Customer Phone:
      DO NOT call 'checkAvailability' again.
      Instead, directly ask:
@@ -263,20 +311,20 @@ RESERVATION & BOOKING RULES:
      1. Your Name
      2. Your Phone Number
      3. Party size (if different from 2)"
-4. Finalizing Reservation:
+5. Finalizing Reservation:
    - When the customer has expressed intent to book (e.g. "Yes book it" or chosen a slot) and provides their Name and Phone, you MUST call 'createReservation' immediately.
-   - For 'slotId', you can pass the slot ID or the slot time (e.g. '20:00 - 21:00' or '20:00').
+   - For 'slotId', you can pass the slot ID or the slot time (e.g. '08:00 PM - 09:00 PM', '8:00 PM', or '20:00').
    - For 'partySize', use the specified size (default 2).
    - Set 'customerConfirmed: true'.
    - NEVER call 'checkAvailability' when you already know the slot and the customer is providing their name/phone to finalize the booking.
-5. Confirmation & Cancellation:
-   - When 'createReservation' succeeds, congratulate the customer, provide their booking reference (e.g. BK-XXXXXX), date, time, and remind them to keep their cancellation token safe.
+6. Confirmation & Cancellation:
+   - When 'createReservation' succeeds, congratulate the customer, provide their booking reference (e.g. BK-XXXXXX), date, 12-hour time with AM/PM, and remind them to keep their cancellation token safe.
    - To cancel, ask for their booking reference and secret cancellation token, then call 'cancelReservation'.
 `;
     tools = getBookingToolDeclarations();
   } else {
     systemInstruction += `
-NOTE: Online table reservations are currently NOT enabled for this business. If asked about booking, politely inform the customer that online reservations are not currently active and advise contacting the restaurant directly.
+NOTE: Online table reservations are currently NOT enabled for this business. If asked about booking, politely inform the customer that online reservations are not currently active and advise contacting the business directly.
 `;
   }
 

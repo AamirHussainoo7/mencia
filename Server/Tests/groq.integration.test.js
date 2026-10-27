@@ -297,7 +297,7 @@ test("processAssistantMessage end-to-end tool loop with customer confirmation va
 test("processAssistantMessage returns isUnavailable when Groq is unavailable", async () => {
   const mockUser = {
     _id: "60d0fe4f5311236168a109ca",
-    assistantName: "Mencia",
+    assistantName: "Arin AI",
     businessName: "Test Bistro",
     groqApiKey: "invalid_key",
     enableNavigation: false,

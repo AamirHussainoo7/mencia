@@ -197,7 +197,7 @@ test("generateGeminiResponse switches to verified fallback model if primary fail
 
 test("processAssistantMessage gracefully returns isUnavailable when Gemini is down", async () => {
   const mockUser = {
-    assistantName: "Mencia",
+    assistantName: "Arin AI",
     businessName: "Test Bistro",
     geminiApiKey: "invalid-key-testing",
     enableNavigation: false,

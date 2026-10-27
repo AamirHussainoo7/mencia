@@ -29,6 +29,21 @@ export const isValidTime = (timeStr) => {
 };
 
 /**
+ * Converts "HH:mm" (24-hour) to 12-hour format with AM/PM (e.g., "08:00 PM").
+ */
+export const format12Hour = (timeStr) => {
+  if (!timeStr || typeof timeStr !== "string") return timeStr || "";
+  const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})/);
+  if (!match) return timeStr;
+  let h = parseInt(match[1], 10);
+  const m = match[2];
+  const ampm = h >= 12 ? "PM" : "AM";
+  h = h % 12;
+  if (h === 0) h = 12;
+  return `${String(h).padStart(2, "0")}:${m} ${ampm}`;
+};
+
+/**
  * Converts "HH:mm" to minutes since midnight for easy comparison.
  */
 export const timeToMinutes = (timeStr) => {
@@ -312,9 +327,15 @@ export const getAvailableSlots = async ({ businessId, date, partySize = 2, userD
 
     return {
       slotId: slot.slotId,
-      name: slot.name || `${slot.startTime} - ${slot.endTime}`,
+      name:
+        slot.name && !/^\d{2}:\d{2}\s*-\s*\d{2}:\d{2}$/.test(slot.name)
+          ? slot.name
+          : `${format12Hour(slot.startTime)} - ${format12Hour(slot.endTime)}`,
+      formattedTime: `${format12Hour(slot.startTime)} - ${format12Hour(slot.endTime)}`,
       startTime: slot.startTime,
       endTime: slot.endTime,
+      startTime12: format12Hour(slot.startTime),
+      endTime12: format12Hour(slot.endTime),
       capacity: maxCap,
       bookedTables: booked,
       availableTables,
@@ -445,13 +466,23 @@ export const createBooking = async ({
     throw new Error(`Party size cannot exceed maximum limit of ${maxParty}.`);
   }
 
-  const slot = (settings.slots || []).find(
-    (s) =>
-      s.slotId === slotId ||
-      s.startTime === slotId ||
-      s.name === slotId ||
-      (slotId && (slotId.includes(s.startTime) || (s.name && slotId.includes(s.name))))
-  );
+  const slot = (settings.slots || []).find((s) => {
+    if (s.slotId === slotId || s.startTime === slotId || s.name === slotId) return true;
+    if (!slotId) return false;
+    const s12 = format12Hour(s.startTime);
+    const e12 = format12Hour(s.endTime);
+    const s12Range = `${s12} - ${e12}`;
+    const cleanSlotId = String(slotId).trim().toUpperCase();
+    return (
+      cleanSlotId === s12 ||
+      cleanSlotId === s12Range ||
+      cleanSlotId.replace(/\s+/g, "") === s12.replace(/\s+/g, "") ||
+      cleanSlotId.replace(/\s+/g, "") === s12Range.replace(/\s+/g, "") ||
+      String(slotId).includes(s.startTime) ||
+      (s.name && String(slotId).includes(s.name)) ||
+      (s12 && cleanSlotId.includes(s12))
+    );
+  });
   if (!slot) {
     throw new Error(`Requested time slot '${slotId}' does not exist.`);
   }

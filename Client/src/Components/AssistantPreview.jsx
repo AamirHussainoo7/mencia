@@ -1,239 +1,158 @@
-import { useState } from 'react'
-import { CiMicrophoneOn } from "react-icons/ci";
-const themes = {
-  dark: {
-    bg: "bg-[#050816]",
+import { useState } from 'react';
+import { FiVolume2, FiArrowRight, FiMic } from 'react-icons/fi';
+import kitchenHomeImg from '../assets/kitchen_home.jpg';
 
-    overlay:
-      "bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.18),transparent_45%)]",
+function AssistantPreview({ onActionClick }) {
+  const [messages, setMessages] = useState([
+    { role: 'assistant', text: '👋 Hi! Welcome to Kitchen Home. How can I help you today?' },
+  ]);
+  const [inputValue, setInputValue] = useState('');
 
-    orb:
-      "from-cyan-400 via-purple-500 to-pink-500",
+  const quickActions = [
+    { label: 'Book a Table', message: "I'd like to book a table for tonight" },
+    { label: 'View Menu', message: 'What are your signature dishes and popular specials?' },
+    { label: 'Our Location', message: 'Where are you located and is parking available?' },
+    { label: 'Opening Hours', message: 'What are your lunch and dinner opening hours?' },
+  ];
 
-    cardBorder:
-      "border border-white/10",
+  const handleAction = (action) => {
+    if (onActionClick) {
+      onActionClick(action.message);
+      return;
+    }
+    // Interactive local simulation
+    const userMsg = { role: 'user', text: action.label };
+    let replyText = '';
+    if (action.label === 'Book a Table') {
+      replyText = 'We have slots open today from 20:00 – 21:00. Would you like to reserve a table for 2 guests?';
+    } else if (action.label === 'View Menu') {
+      replyText = 'Our house specialties include Woodfired Truffle Pizza, Hand-rolled Gnocchi, and Slow-braised Ossobuco.';
+    } else if (action.label === 'Our Location') {
+      replyText = 'We are located at Housing Board, Bhilai. Dedicated valet parking is available right at our front entrance.';
+    } else {
+      replyText = 'We are open Monday to Saturday from 10:00 AM to 10:00 PM (Dinner service starts at 7:00 PM).';
+    }
 
-    text:
-      "text-white",
+    setMessages((prev) => [
+      ...prev,
+      userMsg,
+      { role: 'assistant', text: replyText },
+    ]);
+  };
 
-    sub:
-      "text-white/65",
+  const handleSend = () => {
+    if (!inputValue.trim()) return;
+    const text = inputValue.trim();
+    setInputValue('');
+    setMessages((prev) => [
+      ...prev,
+      { role: 'user', text },
+      { role: 'assistant', text: `Thanks for asking! Our dining team is happy to assist with "${text}". Let me check that for you.` },
+    ]);
+  };
 
-    listening:
-      "text-emerald-400",
-
-    wave:
-      "bg-emerald-400",
-
-    button:
-      "from-purple-500 to-violet-400",
-
-    micGlow:
-      "shadow-[0_0_60px_rgba(168,85,247,0.45)]",
-  },
-
-  light: {
-    bg:
-      "bg-gradient-to-br from-white via-[#f8fafc] to-[#eef6ff]",
-
-    overlay:
-      "bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.14),transparent_45%)]",
-
-    orb:
-      "from-blue-300 via-cyan-300 to-pink-300",
-
-    cardBorder:
-      "border border-[#dbeafe]",
-
-    text:
-      "text-[#081028]",
-
-    sub:
-      "text-[#475569]",
-
-    listening:
-      "text-blue-500",
-
-    wave:
-      "bg-blue-500",
-
-    button:
-      "from-blue-400 to-cyan-400",
-
-    micGlow:
-      "shadow-[0_0_70px_rgba(59,130,246,0.35)]",
-  },
-
-  glass: {
-    bg:
-      "bg-black/20 backdrop-blur-[45px]",
-
-    overlay:
-      "bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_45%)]",
-
-    orb:
-      "from-cyan-200 via-violet-300 to-fuchsia-300",
-
-    cardBorder:
-      "border border-white/10",
-
-    text:
-      "text-white",
-
-    sub:
-      "text-white/70",
-
-    listening:
-      "text-cyan-200",
-
-    wave:
-      "bg-cyan-200",
-
-    button:
-      "from-cyan-400 to-violet-500",
-
-    micGlow:
-      "shadow-[0_0_70px_rgba(34,211,238,0.35)]",
-  },
-
-  neon: {
-    bg:
-      "bg-[#03120d]",
-
-    overlay:
-      "bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.18),transparent_45%)]",
-
-    orb:
-      "from-emerald-300 via-green-400 to-cyan-400",
-
-    cardBorder:
-      "border border-emerald-400/20",
-
-    text:
-      "text-emerald-50",
-
-    sub:
-      "text-emerald-100/70",
-
-    listening:
-      "text-emerald-300",
-
-    wave:
-      "bg-emerald-300",
-
-    button:
-      "from-emerald-400 to-green-500",
-
-    micGlow:
-      "shadow-[0_0_70px_rgba(16,185,129,0.45)]",
-  },
-}
-
-function AssistantPreview() {
-
-    const [theme,setTheme]= useState("dark")
-    const current = themes[theme]
   return (
-    <div className='flex items-center justify-center px-3 sm:px-4 py-10 sm:py-14'>
+    <div className='relative w-full max-w-[340px] sm:max-w-[370px] pt-3.5 transition-all'>
+      {/* Prominent Floating Voice AI Badge (Zero Clipping, 100% Visible & Above Card) */}
+      <div className='absolute top-0 right-6 z-30 flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#382017] text-[#F5E2D1] text-[11px] font-bold shadow-lg border border-[#A34720]/40'>
+        <FiMic className='text-[#A34720] text-xs animate-pulse' />
+        <span className='tracking-tight'>Voice Active</span>
+        <span className='flex gap-0.5 items-end h-3 ml-0.5'>
+          <span className='w-0.5 h-2 bg-[#F5E2D1] rounded-full animate-pulse'></span>
+          <span className='w-0.5 h-3 bg-[#A34720] rounded-full animate-pulse'></span>
+          <span className='w-0.5 h-1.5 bg-[#F5E2D1] rounded-full animate-pulse'></span>
+        </span>
+      </div>
 
-        <div className={`relative w-[280px] h-[450px] sm:w-[330px] sm:h-[500px] md:w-[380px] md:h-[550px] rounded-[32px] sm:rounded-[42px] overflow-hidden transition-all duration-500 ${current.bg} ${current.cardBorder} shadow-[0_20px_80px_rgba(0,0,0,0.28)]`}>
-            <div className={`absolute inset-0 ${current.overlay}`}/>
-
-          <div className='absolute top-4 right-4 sm:top-5 sm:right-5 z-30 flex items-center gap-2'>
-
-            <button onClick={()=>setTheme("dark")} className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#050816] border transition-all cursor-pointer ${
-              theme === "dark"
-                ? "border-purple-400 scale-110"
-                : "border-white/20"
-            }`}/>
-
-            <button
-            onClick={() => setTheme("light")}
-            className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white border transition-all cursor-pointer ${
-              theme === "light"
-                ? "border-blue-400 scale-110"
-                : "border-gray-300"
-            }`}
-          />
-
-          <button
-            onClick={() => setTheme("glass")}
-            className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-br from-white/80 to-white/20 border transition-all cursor-pointer ${
-              theme === "glass"
-                ? "border-white scale-110"
-                : "border-white/20"
-            }`}
-          />
-
-          <button
-            onClick={() => setTheme("neon")}
-            className={`w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-gradient-to-r from-emerald-400 to-green-500 border transition-all cursor-pointer ${
-              theme === "neon"
-                ? "border-emerald-300 scale-110"
-                : "border-transparent"
-            }`}
-          />
-
-          </div>
-
-          <div className='relative z-20 flex flex-col items-center justify-between h-full px-5 py-6 sm:px-7 sm:py-8'>
-
-           <div className='relative mt-1'>
-            <div className={`absolute inset-0 scale-[2] rounded-full blur-[80px] bg-gradient-to-r ${current.orb} opacity-60`}/>
-
-            <div className={`relative w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-br ${current.orb} shadow-[0_0_120px_rgba(255,255,255,0.15)] animate-pulse before:absolute before:inset-0 before:rounded-full before:bg-white/20 before:blur-xl`}/>
-           </div>
-
-
-           <div className='text-center'>
-
-            <h2 className={`text-[20px] sm:text-[26px] md:text-[32px] font-semibold ${current.text}`}>
-              Hello! I'm Mencia
-            </h2>
-
-            <p className={`mt-4 text-[13px] sm:text-[15px] md:text-[16px] leading-6 sm:leading-7 max-w-[280px] mx-auto ${current.sub}`}>
-                Your smart voice assistant.
-              <br />
-              Ask anything about your website.
-            </p>
-
-
-            <div className='mt-6 sm:mt-8'>
-                <p className={`text-sm sm:text-base font-medium ${current.listening}`}>Listening...</p>
-
-                <div className='flex items-end justify-center gap-1 sm:gap-1.5 mt-3 sm:mt-4'>
-                    <span className={`w-1 h-3 rounded-full ${current.wave} animate-pulse`} />
-
-                <span className={`w-1 h-6 rounded-full ${current.wave} animate-pulse`} />
-
-                <span className={`w-1 h-2 rounded-full ${current.wave} animate-pulse`} />
-
-                <span className={`w-1 h-7 rounded-full ${current.wave} animate-pulse`} />
-
-                <span className={`w-1 h-4 rounded-full ${current.wave} animate-pulse`} />
-
-                <span className={`w-1 h-2 rounded-full ${current.wave} animate-pulse`} />
-                </div>
-
+      {/* Main Card */}
+      <div className='bg-[#FFFCF7] rounded-[32px] border border-[#E6DDD1] shadow-[0_20px_60px_rgba(56,32,23,0.14)] overflow-hidden'>
+        {/* Widget Header */}
+        <div className='p-5 pb-4 border-b border-[#EFE9DF] flex items-center justify-between'>
+          <div className='flex items-center gap-3'>
+            <img
+              src={kitchenHomeImg}
+              alt='Kitchen Home'
+              className='w-11 h-11 rounded-2xl object-cover border border-[#E6DDD1]'
+            />
+            <div>
+              <h4 className='font-bold text-sm text-[#201A17] leading-tight'>Kitchen Home</h4>
+              <p className='text-xs text-[#6B5E57] font-medium'>AI Business Assistant</p>
             </div>
-           </div>
-
-
-           <div className='relative mb-1'>
-            <div className={`absolute inset-0 rounded-full blur-2xl opacity-60 ${current.wave}`}/>
-            <button className={`relative w-12 h-12 sm:w-15 sm:h-15 md:w-18 md:h-18 rounded-full bg-gradient-to-br ${current.button} ${current.micGlow} flex items-center justify-center`}>
-                <CiMicrophoneOn className="text-[#000000b9]" size={25}/>
-
-            </button>
-           </div>
-
-           
           </div>
-            
+
+          <div className='flex items-center gap-1.5 text-xs font-semibold text-[#2E7D32] bg-[#E8F5E9] px-2.5 py-1 rounded-full'>
+            <span className='w-1.5 h-1.5 rounded-full bg-[#2E7D32] animate-pulse'></span>
+            <span>Online</span>
+          </div>
         </div>
-      
+
+        {/* Conversation Area */}
+        <div className='p-5 space-y-3.5 max-h-[320px] overflow-y-auto'>
+          {messages.map((m, idx) => (
+            <div
+              key={idx}
+              className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
+            >
+              <div
+                className={`text-xs leading-relaxed px-4 py-3 rounded-2xl max-w-[88%] ${
+                  m.role === 'user'
+                    ? 'bg-[#A34720] text-white rounded-tr-xs'
+                    : 'bg-[#FBF7F0] text-[#201A17] border border-[#EFE9DF] rounded-tl-xs'
+                }`}
+              >
+                {m.text}
+              </div>
+            </div>
+          ))}
+
+          {/* Quick Action Buttons (Peach Pills matching moodboard) */}
+          {messages.length <= 3 && (
+            <div className='space-y-2 pt-2'>
+              {quickActions.map((action) => (
+                <button
+                  key={action.label}
+                  onClick={() => handleAction(action)}
+                  className='w-full py-2.5 px-4 rounded-2xl bg-[#F5E2D1] hover:bg-[#EBD2BD] text-[#382017] text-xs font-bold text-center transition-all cursor-pointer shadow-2xs hover:scale-[1.01]'
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Input Bar */}
+        <div className='p-3.5 bg-[#FBF7F0] border-t border-[#EFE9DF]'>
+          <div className='flex items-center gap-2 bg-white rounded-full border border-[#E6DDD1] pl-3.5 pr-1.5 py-1.5 shadow-inner'>
+            <input
+              type='text'
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder='Type or ask by voice...'
+              className='flex-1 bg-transparent text-xs text-[#201A17] outline-none focus:outline-none focus:ring-0 focus-visible:outline-none border-none placeholder-[#968880]'
+            />
+            {/* Voice Mic Button */}
+            <button
+              type='button'
+              onClick={() => handleAction({ label: 'Voice Question', message: 'What are your popular services and availability?' })}
+              title='Speak to assistant'
+              className='w-8 h-8 rounded-full bg-[#F5E2D1] hover:bg-[#EBD2BD] text-[#A34720] flex items-center justify-center transition-all cursor-pointer flex-shrink-0'
+            >
+              <FiMic size={14} />
+            </button>
+            {/* Send Arrow Button */}
+            <button
+              onClick={handleSend}
+              className='w-8 h-8 rounded-full bg-[#382017] hover:bg-[#A34720] text-white flex items-center justify-center transition-colors cursor-pointer flex-shrink-0'
+            >
+              <FiArrowRight size={14} />
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-  )
+  );
 }
 
-export default AssistantPreview
+export default AssistantPreview;

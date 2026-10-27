@@ -3,7 +3,7 @@ import User from "../Models/user.model.js"
 
 export const getCurrentUser = async (req,res) => {
     try {
-        const user = await User.findById(req.userId)
+        const user = await User.findById(req.userId).select("-password -geminiApiKey -groqApiKey");
         if(!user){
             return res.status(404).json({message:"Failed to get current user"})
         }
@@ -22,6 +22,7 @@ export const saveAssistant = async (req,res) => {
         businessName,
         businessType,
         businessDescription,
+        businessLogo,
         tone,
         theme,
         geminiApiKey,
@@ -37,6 +38,9 @@ export const saveAssistant = async (req,res) => {
         user.businessName = businessName;
         user.businessType = businessType;
         user.businessDescription = businessDescription;
+        if (businessLogo !== undefined) {
+            user.businessLogo = businessLogo;
+        }
         user.tone = tone;
         user.theme = theme;
 

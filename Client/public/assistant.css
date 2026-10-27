@@ -7,8 +7,8 @@
   position: fixed;
   right: 20px;
   bottom: 20px;
-  width: 64px;
-  height: 64px;
+  width: 62px;
+  height: 62px;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -17,6 +17,9 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: #A34720;
+  color: #ffffff;
+  box-shadow: 0 10px 30px rgba(56, 32, 23, 0.35);
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease;
 }
 
@@ -480,6 +483,32 @@
   100% { transform: scale(1.1); box-shadow: 0 0 35px rgba(34, 227, 166, 0.9); }
 }
 
+/* Mic button when assistant is actively speaking: transforms to red stop button */
+.mencia-mic.mencia-mic-speaking {
+  background: #DC2626 !important;
+  color: #FFFFFF !important;
+  border: 1px solid #EF4444 !important;
+  box-shadow: 0 0 20px rgba(220, 38, 38, 0.7), 0 0 40px rgba(239, 68, 68, 0.4) !important;
+  animation: stopButtonPulse 1.2s infinite ease-in-out;
+  cursor: pointer;
+}
+
+.mencia-mic.mencia-mic-speaking:hover {
+  background: #B91C1C !important;
+  transform: scale(1.1);
+}
+
+@keyframes stopButtonPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 14px rgba(220, 38, 38, 0.6);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 28px rgba(239, 68, 68, 0.95);
+  }
+}
+
 .mencia-mic-icon {
   width: 22px;
   height: 22px;
@@ -505,13 +534,21 @@
   background: rgba(255, 255, 255, 0.14);
 }
 
-.mencia-text-input {
+.mencia-text-input,
+.mencia-text-input:focus,
+.mencia-text-input:focus-visible,
+.mencia-input-dock input,
+.mencia-input-dock input:focus,
+.mencia-input-dock input:focus-visible {
   flex: 1;
-  border: none;
-  background: transparent;
-  color: #ffffff;
+  border: none !important;
+  background: transparent !important;
+  color: inherit;
   font-size: 13px;
-  outline: none;
+  outline: none !important;
+  outline-offset: 0 !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
   padding-right: 6px;
 }
 
@@ -540,8 +577,171 @@
 }
 
 /* ========================================================
-   THEMES (Dark, Light, Glass, Neon)
+   THEMES (Warm Restaurant, Dark, Light, Glass, Neon)
    ======================================================== */
+
+/* --- WARM RESTAURANT THEME (Primary Moodboard Flagship) --- */
+.theme-warm {
+  background: #FFFCF7;
+  border: 1px solid #E6DDD1;
+  box-shadow: 0 24px 70px rgba(56, 32, 23, 0.2), 0 4px 16px rgba(56, 32, 23, 0.08);
+}
+
+.theme-warm .mencia-overlay {
+  background: radial-gradient(circle at top, rgba(163, 71, 32, 0.12), transparent 55%);
+}
+
+.theme-warm .mencia-orb,
+.theme-warm .mencia-orb-glow {
+  background: linear-gradient(135deg, #A34720, #D97706, #E28743);
+}
+
+.theme-warm .mencia-title {
+  color: #201A17;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+}
+
+.theme-warm .mencia-sub {
+  color: #6B5E57;
+}
+
+.theme-warm .mencia-status {
+  color: #A34720;
+}
+
+.theme-warm .mencia-wave span {
+  background: #A34720;
+}
+
+.theme-warm .mencia-close-btn {
+  border-color: #E6DDD1;
+  background: #F5EFE6;
+  color: #6B5E57;
+}
+
+.theme-warm .mencia-close-btn:hover {
+  background: #E8DECE;
+  color: #201A17;
+}
+
+.theme-warm .mencia-chip {
+  background: #F5E2D1;
+  border-color: #E6DDD1;
+  color: #382017 !important;
+  font-weight: 600;
+}
+
+.theme-warm .mencia-chip:hover {
+  background: #EAD0B8;
+  color: #201A17 !important;
+}
+
+.theme-warm .mencia-chip-cancel {
+  background: #FCE8E6;
+  border-color: #F5C2BE;
+  color: #C62828 !important;
+}
+
+.theme-warm .mencia-user-text,
+.theme-warm .mencia-user-bubble {
+  background: #A34720;
+  border-color: #853717;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(163, 71, 32, 0.25);
+}
+
+.theme-warm .mencia-ai-text,
+.theme-warm .mencia-ai-bubble,
+.theme-warm .mencia-ai-bubble *,
+.theme-warm .mencia-ai-text * {
+  color: #201A17 !important;
+}
+
+.theme-warm .mencia-bullet {
+  color: #201A17 !important;
+}
+
+.theme-warm .mencia-thinking {
+  background: #F5EFE6;
+}
+
+.theme-warm .mencia-dot {
+  background: #A34720;
+}
+
+.theme-warm .mencia-card {
+  background: #FFFFFF;
+  border-color: #E6DDD1;
+  color: #201A17 !important;
+  box-shadow: 0 4px 16px rgba(56, 32, 23, 0.06);
+}
+
+.theme-warm .mencia-card * {
+  color: #201A17;
+}
+
+.theme-warm .mencia-card-success {
+  background: #F1F8F1;
+  border-color: #C8E6C9;
+  color: #1B5E20 !important;
+}
+
+.theme-warm .mencia-badge {
+  background: #2E7D32;
+  color: #FFFFFF !important;
+}
+
+.theme-warm .mencia-bottom {
+  background: #FAF5ED;
+  border-top-color: #E6DDD1;
+}
+
+.theme-warm .mencia-input-bar {
+  background: #FFFFFF;
+  border-color: #E6DDD1;
+}
+
+.theme-warm .mencia-input-bar:focus-within {
+  border-color: #A34720;
+  background: #FFFFFF;
+}
+
+.theme-warm .mencia-text-input,
+.theme-warm .mencia-text-input:focus,
+.theme-warm .mencia-text-input:focus-visible,
+.theme-warm .mencia-input-dock input,
+.theme-warm .mencia-input-dock input:focus,
+.theme-warm .mencia-input-dock input:focus-visible {
+  color: #201A17 !important;
+}
+
+.theme-warm .mencia-text-input::placeholder {
+  color: #968880 !important;
+}
+
+.theme-warm .mencia-chat-scroll::-webkit-scrollbar-thumb {
+  background: #D9CFC2;
+}
+
+.theme-warm .mencia-chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: #B8A99A;
+}
+
+.theme-warm .mencia-mic,
+.theme-warm.mencia-btn {
+  background: linear-gradient(135deg, #A34720, #853717);
+  box-shadow: 0 8px 24px rgba(163, 71, 32, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.theme-warm .mencia-send-btn {
+  background: #A34720;
+  color: #FFFFFF;
+}
+
+.theme-warm .mencia-send-btn:hover {
+  background: #853717;
+}
 
 /* --- DARK THEME --- */
 .theme-dark {
@@ -599,8 +799,18 @@
   border-color: #cbd5e1;
 }
 
-.theme-light .mencia-text-input { color: #081028; }
-.theme-light .mencia-text-input::placeholder { color: #94a3b8; }
+.theme-light .mencia-text-input,
+.theme-light .mencia-text-input:focus,
+.theme-light .mencia-text-input:focus-visible,
+.theme-light .mencia-input-dock input,
+.theme-light .mencia-input-dock input:focus,
+.theme-light .mencia-input-dock input:focus-visible {
+  color: #081028 !important;
+}
+
+.theme-light .mencia-text-input::placeholder {
+  color: #94a3b8 !important;
+}
 
 .theme-light .mencia-chip {
   background: rgba(0, 0, 0, 0.06);
