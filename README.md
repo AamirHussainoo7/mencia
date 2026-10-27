@@ -1,7 +1,7 @@
 # Arin AI — Autonomous Voice & Reservation AI Platform
 
 <p align="center">
-  <img src="Client/public/kitchen_home.jpg" alt="Arin AI Hero" width="800" style="border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);" />
+  🚀 <strong>Deploying Soon</strong> — <strong><a href="https://x.com/AamirHussainOOP/status/2115116330068410390">checkout project demo here</a></strong>
 </p>
 
 <p align="center">
