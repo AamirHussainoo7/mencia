@@ -25,8 +25,14 @@ const configuredOrigins = process.env.CLIENT_URL
 const privateCors = cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
+    let hostname = "";
+    try {
+      hostname = new URL(origin).hostname;
+    } catch {}
+
     if (
       configuredOrigins.includes(origin) ||
+      hostname.endsWith(".vercel.app") ||
       /^http:\/\/localhost(:\d+)?$/.test(origin) ||
       /^http:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)
     ) {
@@ -37,10 +43,9 @@ const privateCors = cors({
   credentials: true,
 });
 
-  const publicCors =
-  cors({
-    origin: "*",
-  });
+const publicCors = cors({
+  origin: "*",
+});
 
 app.use(express.json())
 app.use(cookieParser())
@@ -48,9 +53,13 @@ app.use(cookieParser())
 // Serve assistant widget script and styles statically so embedding from server also works
 app.use(express.static(path.join(__dirname, "../Client/public")))
 
-app.get("/" , (req,res)=>{
-    res.json("Hello from Server")
-})
+app.get("/", (req, res) => {
+  res.json({ status: "healthy", message: "Arin AI Server is running" });
+});
+
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+});
 
 app.use("/api/auth",privateCors , authRouter)
 app.use("/api/user",privateCors , userRouter)
